@@ -2,24 +2,26 @@ import {NextRequest, NextResponse} from 'next/server';
 import {getServerSession} from 'next-auth';
 import {prisma} from '@/lib/prisma';
 import {authOptions} from '../auth/[...nextauth]/route';
-import {revalidateTag} from 'next/cache';
+const defaultResponse = NextResponse.json({follows: false});
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  const currentUserEmail = session?.user?.email!;
+  const currentUserEmail = session?.user?.email;
   const targetUserId = req.nextUrl.searchParams.get('targetUserId');
-  if (!currentUserEmail) {
-    return NextResponse.json({follows: false});
-  }
+
+  if (!currentUserEmail) return defaultResponse;
+
   const currentUserId = await prisma.user
     .findUnique({where: {email: currentUserEmail}})
-    .then((user) => user?.id!);
+    .then((user) => user?.id);
+
+  if (!currentUserId || !targetUserId) return defaultResponse;
 
   const record = await prisma.follows.findUnique({
     where: {
       followerId_followingId: {
         followerId: currentUserId,
-        followingId: targetUserId!,
+        followingId: targetUserId,
       },
     },
   });
@@ -53,8 +55,6 @@ export async function POST(req: NextRequest) {
       followingId: targetUserId,
     },
   });
-
-  revalidateTag(`follows:${targetUserId}`);
 
   return NextResponse.json(record);
 }
