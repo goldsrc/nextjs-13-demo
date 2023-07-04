@@ -2,8 +2,9 @@ export const getApiPath = (
   relativePath: string,
   params?: Record<string, unknown>,
 ) => {
-  const {INTERNAL_API_URL = 'http://localhost:3000'} = process.env;
-  const url = new URL(`${INTERNAL_API_URL}${relativePath}`);
+  const {INTERNAL_API_URL = 'http://localhost:3000', VERCEL_URL} = process.env;
+  const apiURL = VERCEL_URL ? `https://${VERCEL_URL}` : INTERNAL_API_URL;
+  const url = new URL(`${apiURL}${relativePath}`);
   if (params) url.search = paramstoSearchParams(params).toString();
   return url.toString();
 };
