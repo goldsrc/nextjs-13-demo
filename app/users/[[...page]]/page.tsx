@@ -10,17 +10,16 @@ export default async function Users({params}: Props) {
   const page = parseInt(params.page, 10) || 1;
   const take = 8;
   const skip = (page - 1) * take;
-  const {users, count}: {users: User[]; count: number} = await fetch(
-    getApiPath('/api/allUsers', {take, skip}),
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      next: {
-        tags: ['users'],
-      },
-    },
-  ).then((res) => res.json());
+  const {users, count}: {users: User[]; count: number} = process.env.CI
+    ? {users: [], count: 0}
+    : await fetch(getApiPath('/api/allUsers', {take, skip}), {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        next: {
+          tags: ['users'],
+        },
+      }).then((res) => res.json());
   const totalPages = Math.ceil(count / take);
 
   return (

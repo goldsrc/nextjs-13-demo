@@ -10,13 +10,14 @@ export default async function Dashboard() {
   const session = await getServerSession(authOptions);
 
   const currentUserEmail = session?.user?.email!;
-  const url = new URL(getApiPath('/api/user'));
-  url.searchParams.append('email', currentUserEmail);
-  const user: User = await fetch(url, {
-    next: {
-      tags: [`user_${currentUserEmail}`],
-    },
-  }).then((res) => res.json());
+  const url = new URL(getApiPath('/api/user', {email: currentUserEmail}));
+  const user: User = process.env.CI
+    ? null
+    : await fetch(url, {
+        next: {
+          tags: [`user_${currentUserEmail}`],
+        },
+      }).then((res) => res.json());
 
   if (!session || !user) {
     redirect('/api/auth/signin');

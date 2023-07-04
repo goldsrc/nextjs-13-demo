@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
       author: true,
     },
     skip: parseInt(params.get('skip') ?? '0'),
-    take: parseInt(params.get('take') ?? '100'),
+    take: parseInt(params.get('take') ?? '') || undefined,
   });
   return NextResponse.json({posts, count});
 }

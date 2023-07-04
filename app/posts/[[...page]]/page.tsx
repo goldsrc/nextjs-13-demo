@@ -12,14 +12,14 @@ export default async function Posts({params}: Props) {
   const page = parseInt(params.page, 10) || 1;
   const take = 100;
   const skip = (page - 1) * take;
-  const {posts, count}: {posts: PostWithAuthor[]; count: number} = await fetch(
-    getApiPath('/api/content', {skip, take}),
-    {
-      next: {
-        tags: ['posts'],
-      },
-    },
-  ).then((res) => res.json());
+  const {posts, count}: {posts: PostWithAuthor[]; count: number} = process.env
+    .CI
+    ? {posts: [], count: 0}
+    : await fetch(getApiPath('/api/content', {skip, take}), {
+        next: {
+          tags: ['posts'],
+        },
+      }).then((res) => res.json());
   const totalPages = Math.ceil(count / take);
   return (
     <div>

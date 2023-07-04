@@ -1,17 +1,16 @@
 import {type Post} from '@prisma/client';
 import {getApiPath} from '@/lib/getApiPath';
+import {prisma} from '@/lib/prisma';
 export const revalidate = 1200; // not necessary, just for ISR demonstration
 
 export async function generateStaticParams() {
-  const {posts}: {posts: Post[]} = await fetch(getApiPath('/api/content'), {
-    next: {
-      tags: ['posts'],
+  const posts = await prisma.post.findMany({
+    select: {
+      slug: true,
     },
-  }).then((res) => res.json());
+  });
 
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+  return posts;
 }
 
 interface Props {

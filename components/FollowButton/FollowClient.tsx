@@ -1,5 +1,6 @@
 'use client';
 import {useSession} from 'next-auth/react';
+import {revalidateTag} from 'next/cache';
 import {useRouter} from 'next/navigation';
 import {useState, useTransition} from 'react';
 
@@ -24,9 +25,6 @@ export default function FollowClient({targetUserId, isFollowing}: Props) {
       headers: {
         'Content-Type': 'application/json',
       },
-      next: {
-        tags: [`follows:${targetUserId}`],
-      },
     });
 
     setIsFetching(false);
@@ -48,6 +46,8 @@ export default function FollowClient({targetUserId, isFollowing}: Props) {
     await fetch(`/api/follow?targetUserId=${targetUserId}`, {
       method: 'DELETE',
     });
+
+    revalidateTag(`follows:${targetUserId}`);
 
     setIsFetching(false);
     startTransition(() => router.refresh());
