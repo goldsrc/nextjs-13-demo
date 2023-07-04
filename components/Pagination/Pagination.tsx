@@ -6,6 +6,7 @@ type Props = {
   linkPrefix: string;
 };
 const Pagination = ({currentPage, totalPages, linkPrefix}: Props) => {
+  if (totalPages === 1) return null;
   return (
     <div className={style.pagination}>
       {currentPage > 1 && (

@@ -1,9 +1,6 @@
 import Pagination from '@/components/Pagination/Pagination';
-import {getApiPath} from '@/lib/getApiPath';
 import {prisma} from '@/lib/prisma';
-import {type Post} from '@prisma/client';
 import Link from 'next/link';
-type PostWithAuthor = Post & {author: {name: string}};
 
 type Props = {
   params: {page: string};
@@ -11,7 +8,7 @@ type Props = {
 
 export default async function Posts({params}: Props) {
   const page = parseInt(params.page, 10) || 1;
-  const take = 100;
+  const take = 10;
   const skip = (page - 1) * take;
   const posts = await prisma.post.findMany({
     take,

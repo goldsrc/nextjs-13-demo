@@ -15,7 +15,7 @@ export default async function Dashboard() {
     ? null
     : await fetch(url, {
         next: {
-          tags: [`user_${currentUserEmail}`],
+          tags: [`user:${currentUserEmail}`],
         },
       }).then((res) => res.json());
 
