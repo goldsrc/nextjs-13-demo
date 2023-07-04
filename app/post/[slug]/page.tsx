@@ -18,25 +18,20 @@ interface Props {
 }
 
 export default async function PostPage({params}: Props) {
-  const {
-    posts: [post],
-  }: {posts: Post[]} = await fetch(
-    getApiPath('/api/content', {slug: params.slug}),
-    {
-      next: {
-        tags: [`post:${params.slug}`],
-      },
+  const post = await prisma.post.findUnique({
+    where: {
+      slug: params.slug,
     },
-  ).then((res) => res.json());
+  });
 
   if (!post) {
     return <div>Post Not Found</div>;
   }
 
   return (
-    <div>
+    <article>
       <h1>{post.title}</h1>
       <p>{post.content}</p>
-    </div>
+    </article>
   );
 }
