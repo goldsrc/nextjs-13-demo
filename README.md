@@ -1,7 +1,7 @@
 # Next.js Demo
 
 This is the demo project for the
-[Next.js 13.4](https://nextjs.org/blog/next-13-4)
+[Next.js 13.4](https://nextjs.org/blog/next-13-4) app router
 
 ## Setup
 
